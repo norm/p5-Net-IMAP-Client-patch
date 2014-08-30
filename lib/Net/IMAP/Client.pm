@@ -981,7 +981,7 @@ sub _parse_tokens {
                 $str =~ s/\\\"/\"/g;
                 $str =~ s/\\\\/\\/g;
                 push @{$stack[-1]}, $str; # found string
-            } elsif ($text =~ m/\G(\d+)/gc) {
+            } elsif ($text =~ m/\G(\d+)\s/gc) {
                 push @{$stack[-1]}, $1 + 0; # found numeric
             } elsif ($text =~ m/\G([a-zA-Z0-9_\$\\.+\/*&-]+)/gc) {
                 my $atom = $1;
