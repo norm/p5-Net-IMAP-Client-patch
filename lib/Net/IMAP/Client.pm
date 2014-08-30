@@ -968,23 +968,29 @@ sub _parse_tokens {
         while (1) {
             $text =~ m/\G\s+/gc;
             if ($text =~ m/\G[([]/gc) {
+                # print "    part 1 (start stack)\n";
                 my $sub = [];
                 push @{$stack[-1]}, $sub;
                 push @stack, $sub;
             } elsif ($text =~ m/\G(BODY\[[a-zA-Z0-9._() -]*\])/gc) {
+                # print "    part 2 (push '$1' on stack)\n";
                 push @{$stack[-1]}, $1; # let's consider this an atom too
             } elsif ($text =~ m/\G[])]/gc) {
+                # print "    part 3 (pop stack)\n";
                 pop @stack;
             } elsif ($text =~ m/\G\"((?:\\.|[^\"\\])*)\"/gc) {
                 my $str = $1;
                 # unescape
                 $str =~ s/\\\"/\"/g;
                 $str =~ s/\\\\/\\/g;
+                # print "     part 4 ($str)\n";
                 push @{$stack[-1]}, $str; # found string
             } elsif ($text =~ m/\G(\d+)\s/gc) {
+                # print "    part 5 (push numeric)\n";
                 push @{$stack[-1]}, $1 + 0; # found numeric
             } elsif ($text =~ m/\G([a-zA-Z0-9_\$\\.+\/*&-]+)/gc) {
                 my $atom = $1;
+                # print "    part 6 (push atom on stack '$atom')\n";
                 if (lc $atom eq 'nil') {
                     $atom = undef;
                 }
